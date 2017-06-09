@@ -12,6 +12,7 @@ let options = {
 
 https.createServer(options, function (req, res) {
     res.writeHead(200);
+    res.end('Running...\n');
 }).listen(443, () => {
     console.log("Server running...");
 });
