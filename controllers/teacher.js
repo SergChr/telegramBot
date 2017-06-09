@@ -20,6 +20,8 @@ exports.get = (surname, resolve, reject) => {
                 resolve(info);
             });
             
+        } else {
+            reject("Not found.");
         }
     });
 }

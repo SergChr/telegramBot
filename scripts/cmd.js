@@ -1,5 +1,6 @@
 const TeleBot = require('telebot');
 const bot = new TeleBot('367184766:AAF0b-KzDrRihapNP4fy0Yxf9ukAMgow0VQ');
+const config = require("config");
 const url = require("./request");
 const events = require("./events");
 const mongo = require("../controllers/mongo");
@@ -10,6 +11,10 @@ const teacher = require("../controllers/teacher");
 const self = this;
 
 bot.on(/^\/say (.+)$/, (msg, props) => {
+    if(msg.from.id != config.get("admin_id")) {
+        msg.reply.text("Відмовлено в доступі.");
+        return;
+    }
     const text = props.match[1];
     self.notifySubscribers(text).then(result => {
         // send message to all subscribers
@@ -94,6 +99,11 @@ bot.on(/^розклад$/i, (msg, props) => {
 
 bot.on("text", (msg) => {
     const text = msg.text.toLowerCase();
+    // if text contains all above commands
+    if(text.match(/^розклад$/i) || text.match(/розклад (.+)/i)) {
+        return; // don't need to find teacher, exit
+    }
+    
     search_teacher(text).then(result => {
         const data = JSON.parse(result);
         let teacher = data.teacher;
@@ -103,8 +113,25 @@ bot.on("text", (msg) => {
 🎓 ${teacher.rank}. \n `);
         return msg.reply.photo(teacher.photo); 
     }, err => {
-        console.log(err);
+        msg.reply.text("Введено невірну команду. Скористайся /help 😊");
     });
+});
+
+bot.on("/help", (msg) => {
+    msg.reply.text(`
+▪️ Дізнавайся розклад, не шукаючи його на офіційному сайті університету. Щоб дізнатись розклад дзвінків, просто напиши "розклад":
+🔵розклад
+ Щоб дізнатись розклад занять, напиши "розклад номер_курсу факультет" - наприклад:
+🔵розклад 2 ффбс
+Бот надішле тобі посилання на розклад занять для 2 курсу ФФБС.
+
+▪️ Інформація про викладача. Достатньо ввести його прізвище і бот покаже тобі його повне ім'я та по батькові, назву кафедри, наукове звання,  а також у якому кабінеті можна знайти цього викладача. Наприклад:
+🔵Мазаракі
+
+▪️Анонси подій та новини з офіційного сайту  університету та групи VK. Бот надішле тобі  усю свіжу інформацію, як тільки вона з'явиться.
+
+P.S. усі команди пишуться без "🔵" :)
+`);
 });
 
 function search_teacher(surname) {
@@ -136,7 +163,6 @@ function defineFaculty(fac) {
 }
 
 function verifyFields(course, faculty) {
-    // console.log(`Course: ${course}, faculty: ${faculty}`);
     if (typeof (+course) != 'number' || course > 6) {
         return false;
     } else {
@@ -149,6 +175,7 @@ function verifyFields(course, faculty) {
         return true;
     }
 }
+// notify all
 exports.notifySubscribers = function (text) {
     return new Promise((resolve, reject) => {
         mongo.User.find({}, "userID", (err, docs) => {
