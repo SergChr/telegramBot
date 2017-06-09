@@ -6,11 +6,11 @@ const mongo = require("../controllers/mongo");
 const user = require("../controllers/user");
 const news = require("./news");
 const knteu_vk = require("./knteu_vk");
+const teacher = require("../controllers/teacher");
 const self = this;
 
 bot.on(/^\/say (.+)$/, (msg, props) => {
     const text = props.match[1];
-   console.log(text); 
     self.notifySubscribers(text).then(result => {
         // send message to all subscribers
     });
@@ -26,61 +26,62 @@ bot.on("/start", (msg) => {
     addUser(newUser).then(result => {
         let text = `Доступні команди:
     👉розклад *курс* *факультет* \n Наприклад: \n розклад 3 фргтб`;
-       // console.log(result);
-   return bot.sendMessage(msg.from.id, text); 
+        // console.log(result);
+        return bot.sendMessage(msg.from.id, text);
     });
+
     function addUser(newuser) {
         //console.log("addUser called");
         return new Promise((resolve, reject) => {
-           user.add(newuser, resolve, reject); 
+            user.add(newuser, resolve, reject);
         });
     }
 });
 
-bot.on("text", (msg) => {
-    let cmd = msg.text.toLowerCase().split(" ");
-    if (cmd[0] == `розклад`) {
-        // cmd[0] = first command, cmd[1] = course, cmd[2] = faculty
-        if (cmd[1] && cmd[2]) { // if command also has 2 numbers - course and faculty
-            if(verifyFields(cmd[1], cmd[2])) {
-    
-            let facultyNum = defineFaculty(cmd[2]);
-                if(!facultyNum) {
+bot.on(/розклад (.+)/i, (msg, props) => {
+    const text = props.match[0];
+    // text after 'розклад'
+    let info = msg.text.toLowerCase().split(" ");
+        if (info[1] && info[2]) {
+            if (verifyFields(info[1], info[2])) {
+
+                let facultyNum = defineFaculty(info[2]);
+                if (!facultyNum) {
                     return bot.sendMessage(msg.from.id, `Невірно введена назва факультету.`);
                 }
-            
-            // Magister schedule
-            if (cmd[1] > 4) {
-                getMSchedule(facultyNum, cmd[1]).then(result => {
-                    let answer = cmd[1] + ` курс ` + result[0] + `\n` + result[1];
-                    return bot.sendMessage(msg.from.id, answer); // result[1] - link, result[0] - faculty
-                });
-                
-               function getMSchedule(faculty, course) {
-                   return new Promise((resolve, reject) => {
-                      url.getMSchedule(course, faculty, resolve, reject); 
-                   });
-               }
-            } else {
-                getSchedule(facultyNum, cmd[1]).then(result => {
-                    let answer = cmd[1] + ` курс ` + result[0] + `\n` + result[1];
-                    return bot.sendMessage(msg.from.id, answer); // result[1] - link, result[0] - faculty
-                });
 
-                function getSchedule(faculty, course) {
-                    return new Promise((resolve, reject) => {
-                        url.getSchedule(course, faculty, resolve, reject);
+                // Magister schedule
+                if (info[1] > 4) {
+                    getMSchedule(facultyNum, info[1]).then(result => {
+                        let answer = info[1] + ` курс ` + result[0] + `\n` + result[1];
+                        return bot.sendMessage(msg.from.id, answer); // result[1] - link, result[0] - faculty
                     });
-                }
-            }
-    } else {
-        return bot.sendMessage(msg.from.id, `Невірний формат даних.\n Приклад: "розклад 4 ффбс"`);
-    }
-        } else if (cmd[0] == `розклад` && cmd[1] == undefined) { // if command == `розклад`
-            // it will send the bell schedule
-            // bot.sendMessage(msg.from.id, `Завантажую розклад дзвінків...`);
 
-            getBell().then(result => {
+                    function getMSchedule(faculty, course) {
+                        return new Promise((resolve, reject) => {
+                            url.getMSchedule(course, faculty, resolve, reject);
+                        });
+                    }
+                } else {
+                    getSchedule(facultyNum, info[1]).then(result => {
+                        let answer = info[1] + ` курс ` + result[0] + `\n` + result[1];
+                        return bot.sendMessage(msg.from.id, answer); // result[1] - link, result[0] - faculty
+                    });
+
+                    function getSchedule(faculty, course) {
+                        return new Promise((resolve, reject) => {
+                            url.getSchedule(course, faculty, resolve, reject);
+                        });
+                    }
+                }
+            } else {
+                return bot.sendMessage(msg.from.id, `Невірний формат даних.\n Приклад: "розклад 4 ффбс"`);
+            }
+        }
+});
+
+bot.on(/^розклад$/i, (msg, props) => {
+    getBell().then(result => {
                 return bot.sendMessage(msg.from.id, result);
             });
 
@@ -89,12 +90,28 @@ bot.on("text", (msg) => {
                     url.getBellSchedule(resolve, reject);
                 });
             }
-        }
-    }
+    });
+
+bot.on("text", (msg) => {
+    const text = msg.text.toLowerCase();
+    search_teacher(text).then(result => {
+        const data = JSON.parse(result);
+        let teacher = data.teacher;
+        bot.sendMessage(msg.from.id, `${teacher.surname} ${teacher.name} ${teacher.fathername} \n 
+Де шукати: ${data.room} \n
+Кафедра: ${teacher.cathedra} \n
+🎓 ${teacher.rank}. \n `);
+        return msg.reply.photo(teacher.photo); 
+    }, err => {
+        console.log(err);
+    });
 });
 
-// post message to all subscribers 
-
+function search_teacher(surname) {
+    return new Promise((resolve, reject) => {
+        teacher.get(surname, resolve, reject);
+    });
+}
 
 function defineFaculty(fac) {
     let faculty = fac.toLowerCase(),
@@ -118,21 +135,21 @@ function defineFaculty(fac) {
     return facultyNum;
 }
 
-function verifyFields(course, faculty){
-   // console.log(`Course: ${course}, faculty: ${faculty}`);
-    if(typeof(+course) != 'number' || course > 6) {
+function verifyFields(course, faculty) {
+    // console.log(`Course: ${course}, faculty: ${faculty}`);
+    if (typeof (+course) != 'number' || course > 6) {
         return false;
     } else {
         return true;
     }
 
-    if(typeof(faculty) != 'string' || faculty.length < 3 || faculty.length > 4) {
+    if (typeof (faculty) != 'string' || faculty.length < 3 || faculty.length > 4) {
         return false;
     } else {
         return true;
     }
 }
-exports.notifySubscribers = function(text) {
+exports.notifySubscribers = function (text) {
     return new Promise((resolve, reject) => {
         mongo.User.find({}, "userID", (err, docs) => {
             if (!err) {

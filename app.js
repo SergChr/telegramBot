@@ -1,11 +1,13 @@
 let https = require('https'),
     fs = require('fs'),
-    cmd = require("./scripts/cmd");
+    cmd = require("./scripts/cmd"),
+    config = require("config");
 
+// certificates for https
 let options = {
     key: fs.readFileSync('./cert/key.pem'),
     cert: fs.readFileSync('./cert/cert.pem'),
-    passphrase: "12345"
+    passphrase: config.get("cert_pass")
 };
 
 https.createServer(options, function (req, res) {
