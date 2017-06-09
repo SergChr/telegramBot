@@ -1,6 +1,6 @@
-const TeleBot = require('telebot');
-const bot = new TeleBot('367184766:AAF0b-KzDrRihapNP4fy0Yxf9ukAMgow0VQ');
 const config = require("config");
+const TeleBot = require('telebot');
+const bot = new TeleBot(config.get("telegram.token"));
 const url = require("./request");
 const events = require("./events");
 const mongo = require("../controllers/mongo");
