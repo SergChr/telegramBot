@@ -1,7 +1,7 @@
 //let https = require('https'),
   //  fs = require('fs'),
-  // cmd = require("./scripts/cmd"),
-   let config = require("config"),
+let cmd = require("./scripts/cmd"),
+    config = require("config"),
     express = require("express"),
     app = express();
 /*

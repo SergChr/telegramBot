@@ -10,6 +10,8 @@ const knteu_vk = require("./knteu_vk");
 const teacher = require("../controllers/teacher");
 const self = this;
 
+console.log("cmd.js is working...");
+
 bot.on(/^\/say (.+)$/, (msg, props) => {
     if(msg.from.id != config.get("admin_id")) {
         msg.reply.text("Відмовлено в доступі.");
@@ -22,6 +24,7 @@ bot.on(/^\/say (.+)$/, (msg, props) => {
 });
 
 bot.on("/start", (msg) => {
+    console.log("/start called");
     let newUser = JSON.stringify({
         userID: msg.from.id,
         firstName: msg.from.first_name,
@@ -119,6 +122,7 @@ bot.on("text", (msg) => {
 });
 
 bot.on("/help", (msg) => {
+    console.log("/help called");
     msg.reply.text(`
 ▪️ Дізнавайся розклад, не шукаючи його на офіційному сайті університету. Щоб дізнатись розклад дзвінків, просто напиши "розклад":
 🔵розклад
