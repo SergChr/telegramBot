@@ -43,6 +43,7 @@ bot.on("/start", (msg) => {
     }
 });
 
+
 bot.on(/розклад (.+)/i, (msg, props) => {
     const text = props.match[0];
     // text after 'розклад'
