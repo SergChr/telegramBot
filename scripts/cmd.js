@@ -29,9 +29,7 @@ bot.on("/start", (msg) => {
         username: msg.from.username
     });
     addUser(newUser).then(result => {
-        let text = `Доступні команди:
-    👉розклад *курс* *факультет* \n Наприклад: \n розклад 3 фргтб`;
-        // console.log(result);
+        let text = `Привіт! Напиши /help, щоб побачити доступні команди :)`;
         return bot.sendMessage(msg.from.id, text);
     });
 
