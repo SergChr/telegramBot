@@ -99,7 +99,7 @@ bot.on(/^розклад$/i, (msg, props) => {
 bot.on("text", (msg) => {
     const text = msg.text.toLowerCase();
     // if text contains all above commands
-    if(text.match(/^розклад$/i) || text.match(/розклад (.+)/i) || text.match(/^\/say (.+)$/) || text == "/help") {
+    if(text.match(/^розклад$/i) || text.match(/розклад (.+)/i) || text.match(/^\/say (.+)$/) || text == "/help" || text == "/start") {
         return; // don't need to find teacher, exit
     }
     
