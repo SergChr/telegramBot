@@ -4,15 +4,13 @@ let https = require('https'),
     config = require("config"),
     express = require("express"),
     app = express();
-
+/*
 // certificates for https
 let options = {
     key: fs.readFileSync('./cert/key.pem'),
     cert: fs.readFileSync('./cert/cert.pem'),
     passphrase: config.get("cert_pass")
 };
-
-/*
 https.createServer(options, function (req, res) {
     res.writeHead(200);
     res.end('Running...\n');
