@@ -29,6 +29,10 @@ function updateEvents() {
 
 
 function notifyAll(event) {
+    if(event == undefined || event.title == undefined || event.link == undefined) {
+        console.log("One news has undefined parameters.");
+        return;
+    }
     let text = `${event.title} \n 
 ${event.link}`;
 

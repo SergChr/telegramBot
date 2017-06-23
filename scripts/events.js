@@ -30,6 +30,10 @@ function updateEvents() {
 
 
 function notifyAll(event) {
+    if(event == undefined || event.title == undefined || event.link == undefined) {
+        console.log("One event has undefined parameters.");
+        return;
+    }
     let text = `🗣Нова подія ! Відбудеться ${event.date}. \n
 ${event.title} \n 
 ${event.link}`;

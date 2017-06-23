@@ -98,6 +98,7 @@ bot.on(/^розклад$/i, (msg, props) => {
 
 bot.on("text", (msg) => {
     const text = msg.text.toLowerCase();
+    console.log(`TEXT: ${text}, FROM: ${msg.from.id}`);
     // if text contains all above commands
     if(text.match(/^розклад$/i) || text.match(/розклад (.+)/i) || text.match(/^\/say (.+)$/) || text == "/help" || text == "/start") {
         return; // don't need to find teacher, exit
@@ -132,7 +133,7 @@ bot.on("/help", (msg) => {
 
 P.S. усі команди пишуться без "🔵" :)
 
-Написати розробнику: 4xeiu1eafygp@mail.ru
+Написати розробнику: sergs.chr2@gmail.com
 `);
 });
 
@@ -179,6 +180,9 @@ function verifyFields(course, faculty) {
 }
 // notify all
 exports.notifySubscribers = function (text) {
+    if(text == undefined) {
+        return;
+    }
     return new Promise((resolve, reject) => {
         mongo.User.find({}, "userID", (err, docs) => {
             if (!err) {

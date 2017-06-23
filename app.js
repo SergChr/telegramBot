@@ -1,10 +1,10 @@
-//let https = require('https'),
-//    fs = require('fs'),
-  let  cmd = require("./scripts/cmd"),
+let https = require('https'),   
+    fs = require('fs'),
+    cmd = require("./scripts/cmd"),
     config = require("config"),
     express = require("express"),
     app = express();
-/*
+
 // certificates for https
 let options = {
     key: fs.readFileSync('./cert/key.pem'),
@@ -12,7 +12,7 @@ let options = {
     passphrase: config.get("cert_pass")
 };
 
-
+/*
 https.createServer(options, function (req, res) {
     res.writeHead(200);
     res.end('Running...\n');
@@ -24,3 +24,4 @@ https.createServer(options, function (req, res) {
 app.listen(process.env.PORT || 3000, function(){
     console.log("Server running...");
 });
+
