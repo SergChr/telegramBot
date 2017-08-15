@@ -6,7 +6,6 @@ const config = require("config");
 const event = require("../controllers/event");
 const updateDelay = config.get("update_delay");
 
-
 const token = config.get("vk.token");
 
 //  https://api.vk.com/method/METHOD_NAME?PARAMETERS&access_token=ACCESS_TOKEN
