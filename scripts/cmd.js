@@ -50,7 +50,7 @@ bot.on(/розклад (.+)/i, (msg, props) => {
             if (verifyFields(info[1], info[2])) {
 
                 let facultyNum = defineFaculty(info[2]);
-                if (!facultyNum) {
+                if (facultyNum === false) {
                     return bot.sendMessage(msg.from.id, `Невірно введена назва факультету.`);
                 }
 
