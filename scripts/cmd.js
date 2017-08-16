@@ -15,6 +15,7 @@ bot.on(/^\/say (.+)$/, (msg, props) => {
         msg.reply.text("Відмовлено в доступі.");
         return;
     }
+  
     const text = props.match[1];
     self.notifySubscribers(text).then(result => {
         // send message to all subscribers
@@ -32,15 +33,14 @@ bot.on("/start", (msg) => {
         const text = `Привіт! Я буду тобі допомагати! Напиши /help, щоб побачити доступні команди :) Чекай свіжих новин!`;
         return bot.sendMessage(msg.from.id, text);
     });
+});
 
-    function addUser(newUser) {
+function addUser(newUser) {
         //console.log("addUser called");
         return new Promise((resolve, reject) => {
             user.add(newUser, resolve, reject);
         });
     }
-});
-
 
 bot.on(/розклад (.+)/i, (msg, props) => {
     const text = props.match[0];
