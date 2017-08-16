@@ -139,7 +139,7 @@ bot.on("/help", (msg) => {
         lastName: msg.from.last_name,
         username: msg.from.username
     });
-    await addUser(newUser);
+    addUser(newUser);
 });
 
 function search_teacher(surname) {
