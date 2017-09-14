@@ -1,4 +1,4 @@
-let https = require('https'),   
+const https = require('https'),   
     fs = require('fs'),
     cmd = require("./scripts/cmd"),
     config = require("config"),

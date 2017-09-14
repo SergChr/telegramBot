@@ -32,7 +32,7 @@ function update() {
 
 function notifyAll(event) {
     let text = `Новий пост на ${event.link}
-${event.title}`;
+    ${event.title}`;
 
     cmd.notifySubscribers(text).then(result => {
         // send message to all subscribers
